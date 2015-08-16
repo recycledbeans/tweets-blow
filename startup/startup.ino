@@ -31,7 +31,13 @@ void loop() {
   fan_speed = base_fan_voltage + pot_percent;
 
   // Set fan to GO!
-  analogWrite(fan_pin, fan_speed);
+  if(pot_percent < 2)
+  {
+    analogWrite(fan_pin, 0);
+  }
+  else {
+   analogWrite(fan_pin, fan_speed); 
+  }
 
   // Slight delay in between shifts in speed
   delay(400);
@@ -48,7 +54,7 @@ int potPercentage() {
   int pot_percentage = ceil((pot_val / 1023) * 100);
 
   // For reference. Can comment out.
-  Serial.println(pot_percentage);
+//  Serial.println(pot_percentage);
 
   // return the percentage
   return pot_percentage;
