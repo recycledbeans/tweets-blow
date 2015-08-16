@@ -30,13 +30,15 @@ void loop() {
   // Just add the percentage (0-100) to the base_fan_voltage to determine PWM (0-255)
   fan_speed = base_fan_voltage + pot_percent;
 
-  // Set fan to GO!
+  // If the potentiometer is turned all the way down
   if(pot_percent < 2)
   {
+    // Turn it off
     analogWrite(fan_pin, 0);
   }
   else {
-   analogWrite(fan_pin, fan_speed); 
+    // Otherwise, set fan to GO!
+    analogWrite(fan_pin, fan_speed); 
   }
 
   // Slight delay in between shifts in speed
