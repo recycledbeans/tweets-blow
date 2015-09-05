@@ -1,6 +1,17 @@
 
-// The pin used for PWM of the fan
-int const fan_pin = 9;
+/**
+ * PARTS LIST:
+ *  
+ *  1 - MOSFET
+ *  1 - 9v battery terminal (and 9v battery)
+ *  1 - Diode IN4007 1A 1000v
+ *  1 - PC Fan (12v) with PWM (4 wires)
+ *  1 - Potentiometer
+ *  
+ */
+
+// MOSFET GPIO pin
+int const mosfet_pin = 9;
 
 // Potentiometer
 int const pot_pin = A0;
@@ -14,39 +25,85 @@ int base_fan_voltage = 155;
 // Potentiometer voltage in percentage
 int pot_percent = 0;
 
-void setup() {
+// Seconds since last check for status
+int time_since_last_check = 1;
 
-  analogWrite(fan_pin, fan_speed);
+// Time (in seconds) that fan should run for a tweet
+int max_fan_time = 5;
 
+void setup() 
+{
+
+  pinMode(mosfet_pin, OUTPUT);
   Serial.begin(9600);
 
 }
 
-void loop() {
+bool check = false;
 
-  // Get the potentiometer voltage as a percentage
-  pot_percent = potPercentage();
+void loop() 
+{
 
-  // Just add the percentage (0-100) to the base_fan_voltage to determine PWM (0-255)
-  fan_speed = base_fan_voltage + pot_percent;
+  Serial.println(time_since_last_check);    
 
-  // If the potentiometer is turned all the way down
-  if(pot_percent < 2)
+  if(time_since_last_check >= max_fan_time)
   {
-    // Turn it off
-    analogWrite(fan_pin, 0);
-  }
-  else {
-    // Otherwise, set fan to GO!
-    analogWrite(fan_pin, fan_speed); 
+
+    fan("stop");
+    check = checkForUpdate();
+
+    if(check == true)
+    {
+      fan("start");
+    }
+
+    time_since_last_check = 0;
+    
   }
 
-  // Slight delay in between shifts in speed
-  delay(400);
-    
+  delay(1000);
+
+  time_since_last_check++;
+
+  
 }
 
-int potPercentage() {
+void fan(String status)
+{
+  if(status == "start")
+  {
+    Serial.println("Starting Fan...");
+    digitalWrite(mosfet_pin, HIGH);
+  }
+  else
+  {
+    Serial.println("Fan Stopped.");
+    digitalWrite(mosfet_pin, LOW);
+  }
+}
+
+bool checkForUpdate()
+{
+
+  // WiFi-related logic would go here;
+
+  // Simulated wait time
+  delay(3000);
+
+  // Temp random on or off
+  int r = rand();
+
+  if(r%2 != 0)
+  {
+    return true;
+  }
+
+    return false;
+  
+}
+
+int potPercentage() 
+{
 
   // Read value of potentiometer (needs to be float instead of integer to calculate next part)
   float pot_val = analogRead(pot_pin);
