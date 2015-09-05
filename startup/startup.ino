@@ -72,14 +72,42 @@ void fan(String status)
 {
   if(status == "start")
   {
+    beforeFanStart();
     Serial.println("Starting Fan...");
     digitalWrite(mosfet_pin, HIGH);
+    afterFanStart();
   }
   else
   {
+    beforeFanStop();
     Serial.println("Fan Stopped.");
     digitalWrite(mosfet_pin, LOW);
+    afterFanStop();
   }
+}
+
+/**
+ * Add some more custom actions if you want in the events below.
+ */
+
+void beforeFanStart()
+{
+  
+}
+
+void afterFanStart()
+{
+  
+}
+
+void beforeFanStop()
+{
+  
+}
+
+void afterFanStop()
+{
+  
 }
 
 bool checkForUpdate()
